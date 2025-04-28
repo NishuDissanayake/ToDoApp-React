@@ -63,6 +63,7 @@ export const TaskProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
+    console.log("Saving tasks to localStorage:", tasks);
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
 
