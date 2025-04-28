@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Form, Button } from 'react-bootstrap';
-import { Task } from '../types/task';
+import { Form, Button, Row, Col } from 'react-bootstrap';
+import { useTaskContext } from '../contexts/TaskContext';
 
 function AddTaskPage() {
   const navigate = useNavigate();
+  const { tasks, setTasks } = useTaskContext(); // ✅ use context
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
@@ -15,38 +16,38 @@ function AddTaskPage() {
       return;
     }
 
-    const storedTasks = JSON.parse(localStorage.getItem('tasks') || '[]') as Task[];
-    const newId = storedTasks.length > 0 ? Math.max(...storedTasks.map(t => t.id)) + 1 : 1;
+    const newId = tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) + 1 : 1;
 
-    const newTask: Task = {
+    const newTask = {
       id: newId,
       title,
       description,
       isCompleted: false,
     };
 
-    storedTasks.push(newTask);
-    localStorage.setItem('tasks', JSON.stringify(storedTasks));
+    setTasks([...tasks, newTask]);
     navigate('/');
   };
 
   return (
-    <div>
-      <h2 className="mb-4">Add New Task</h2>
-      <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3">
-          <Form.Label>Title</Form.Label>
-          <Form.Control value={title} onChange={e => setTitle(e.target.value)} />
-        </Form.Group>
+    <Row>
+      <Col md={{ span: 8, offset: 2 }}>
+        <h2 className="mb-4">Add New Task</h2>
+        <Form onSubmit={handleSubmit}>
+          <Form.Group className="mb-3">
+            <Form.Label>Title</Form.Label>
+            <Form.Control value={title} onChange={e => setTitle(e.target.value)} />
+          </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Description</Form.Label>
-          <Form.Control as="textarea" rows={3} value={description} onChange={e => setDescription(e.target.value)} />
-        </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Description</Form.Label>
+            <Form.Control as="textarea" rows={3} value={description} onChange={e => setDescription(e.target.value)} />
+          </Form.Group>
 
-        <Button type="submit">Add Task</Button>
-      </Form>
-    </div>
+          <Button type="submit">Add Task</Button>
+        </Form>
+      </Col>
+    </Row>
   );
 }
 
